@@ -22,10 +22,12 @@ class Playlist {
 	string name;
 public:
 	Playlist();
+	Playlist(string name);
 	Playlist(string name, vector<Track>& tracks);
 	string getName();
 	vector<Track>& getTracks();
 	void addTrack(const Track& track);
 	void addTrack(string trackName, string artistName);
+	void printInfo();
 	friend ostream& operator<<(ostream& os, const Playlist& thePlaylist); //Overload the << operator so that cout prints the playlist name
 };

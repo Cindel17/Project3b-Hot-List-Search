@@ -39,6 +39,10 @@ Playlist::Playlist() {
 	name = "undefined";
 }
 
+Playlist::Playlist(string _name) {
+	name = _name;
+}
+
 Playlist::Playlist(string _name, vector<Track>& _tracks) {
 	name = _name;
 	for (Track t : _tracks) tracks.push_back(t);
@@ -59,6 +63,14 @@ void Playlist::addTrack(const Track& track) {
 void Playlist::addTrack(string trackName, string artistName) {
 	Track theTrack(trackName, artistName);
 	tracks.push_back(theTrack);
+}
+
+void Playlist::printInfo() {
+	cout << "Name of playlist: " << name << endl;
+	cout << "Tracks in this playlist: " << endl;
+	for (Track t : tracks) {
+		cout << t.name << endl;
+	}
 }
 
 ostream& operator<<(ostream& os, const Playlist& thePlaylist) {
