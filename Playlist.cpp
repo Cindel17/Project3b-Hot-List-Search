@@ -20,6 +20,14 @@ void Track::addPlaylist(string playlistName) {
 	playlistNames.push_back(playlistName);
 }
 
+void Track::printInfo() {
+	cout << "Name of track: " << name << endl;
+	cout << "Artist: " << artist << endl;
+	cout << "Names of playlists containing this track:" << endl;
+	for (string s : playlistNames) cout << s << endl;
+	cout << endl;
+}
+
 ostream& operator<<(ostream& os, const Track& theTrack) {
 	os << theTrack.name;
 	return os;

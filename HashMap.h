@@ -50,6 +50,7 @@ public:
 	HashMap(int size);
 	void insert(string key, T value);
 	list<T> retrieve(string key); //If a value is not in the map, retrieve throws an out_of_range exception.
+	vector<string>& getAllKeys();
 	int bucketCount();
 	void print(string key);
 	void print();
@@ -158,6 +159,11 @@ void HashMap<T>::resize() {
 template<typename T>
 int HashMap<T>::bucketCount() {
 	return hashTable->size();
+}
+
+template<typename T>
+vector<string>& HashMap<T>::getAllKeys() {
+	return keys;
 }
 
 //Print functions(for debugging)

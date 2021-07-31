@@ -13,6 +13,7 @@ struct Track {
 	Track(string name, string artist);
 	bool operator==(const Track& rhs); //return whether the name and artist are equal
 	void addPlaylist(string playlistName);
+	void printInfo();
 	friend ostream& operator<<(ostream& os, const Track& theTrack); //Overload the << operator so that cout prints the track name
 };
 
