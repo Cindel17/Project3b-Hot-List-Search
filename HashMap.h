@@ -49,7 +49,7 @@ public:
 	HashMap();
 	HashMap(int size);
 	void insert(string key, T value);
-	list<T> retrieve(string key);
+	list<T> retrieve(string key); //If a value is not in the map, retrieve throws an out_of_range exception.
 	int bucketCount();
 	void print(string key);
 	void print();
