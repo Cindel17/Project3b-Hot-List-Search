@@ -9,6 +9,42 @@
 using namespace std;
 using namespace std::chrono;
 
+//**************Function to read in the data*********************//
+
+vector<string> parseLine(string theLine) {
+    vector<string> returnVec(4, "");
+
+    int vecPosition = 0;
+    bool keepReading = false; //Keep track of whether we are currently reading in a string enclosed in quotes.
+
+    for (int i = 0; i < theLine.size(); i++) {
+       
+        if (keepReading == true) {
+            /* If the next character is an escape character, do the following:
+                1. Increment i without adding the escape character to the string.
+                2. Add the escaped character to the string.
+            */
+
+            if (theLine.at(i) == '\\') {
+                i++;
+                returnVec.at(vecPosition).push_back(theLine.at(i));
+            }
+
+            //If the next character is a closing quote, set keepReading to false until we find the next open quote.
+            else if (theLine.at(i) == '\"' && i == theLine.size() - 1) keepReading = false;
+            else if(theLine.at(i) == '\"' && theLine.at(i+1) == ',') keepReading = false;
+
+            else returnVec.at(vecPosition).push_back(theLine.at(i));
+        }
+        else {
+            if (theLine.at(i) == ',') vecPosition++;
+            else if (theLine.at(i) == '\"') keepReading = true;
+        }
+    }
+
+
+    return returnVec;
+}
 
 //**************Functions to initialize a map*********************//
 
@@ -34,23 +70,10 @@ HashMap<Track*> createTrackMap(string filename, int numEntries) {
 
     //start reading each row in the for loop
     for (int i = 0; i < numEntries; i++) {
-        vector <string> row = {};
 
         getline(file, line);
-        stringstream s(line);
 
-        //while loop store the stringstream variable s into a string variable word
-        //if the string is empty so will be the string stored into vector row
-        while (getline(s, word, ',')) {
-            int size = word.length();
-            if (word.empty() == true) {
-                word = "";
-            }
-            else {
-                word = word.substr(1, size - 2);
-            }
-            row.push_back(word);
-        }
+        vector<string> row = parseLine(line);
 
         //here are the vector indexes of each data category 
         user_id = row.at(0);
@@ -107,24 +130,11 @@ HashMap<Playlist*> createPlaylistMap(string filename, int numEntries) {
     }
 
     //start reading each row in the for loop
-    for (int i = 0; i < numEntries; i++) {
-        vector <string> row = {};
+    for (int i = 0; i < numEntries; i++) {   
 
         getline(file, line);
-        stringstream s(line);
 
-        //while loop store the stringstream variable s into a string variable word
-        //if the string is empty so will be the string stored into vector row
-        while (getline(s, word, ',')) {
-            int size = word.length();
-            if (word.empty() == true) {
-                word = "";
-            }
-            else {
-                word = word.substr(1, size - 2);
-            }
-            row.push_back(word);
-        }
+        vector<string> row = parseLine(line);
 
         //here are the vector indexes of each data category 
         user_id = row.at(0);
@@ -211,6 +221,17 @@ int main() {
 
     auto timeTaken2 = duration_cast<milliseconds>(afterMap2 - beforeMap2);
     cout << "Time taken to create playlist map: " << timeTaken2.count() << " milliseconds" << endl;
+
+
+    //Example of how you would retrieve a particular value from the map.
+    //The map throws an out_of_range exception if a key is not valid.
+    try {
+        list<Playlist*> testList = playlistMap.retrieve("Chill out");
+        for (Playlist* p : testList) p->printInfo();
+    }
+    catch (out_of_range e) {
+        cout << "Key not found" << endl;
+    }
 
     return 0;
 }
