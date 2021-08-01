@@ -1,7 +1,15 @@
 #pragma once
 #include<unordered_map>
 #include<string>
+#include<queue>
 using namespace std;
+
+//The search and insert functions are more efficient when called an a queue of characters as opposed to a string, as the first letter is removed from the key with every recursive call.
+queue<char> createStringQueue(string theString) {
+	queue<char> theQueue;
+	for (char c : theString) theQueue.push(c);
+	return theQueue;
+}
 
 template<typename T>
 class TrieNode {
@@ -14,6 +22,8 @@ public:
 	T getData();
 	TrieNode* search(string key); //search for the given string, treating the current node as the root. Returns a pointer to the required node if found, returns nullptr if not found.
 	void insert(string key, T data);
+	TrieNode* search(queue<char>& key);
+	void insert(queue<char>& key, T data);
 };
 
 template<typename T>
@@ -29,19 +39,19 @@ T TrieNode<T>::getData() {
 }
 
 template<typename T>
-void TrieNode<T>::insert(string key, T data) {
+void TrieNode<T>::insert(queue<char>& key, T data) {
 
 	//Base case: The key length is 1. Insert a new leaf node with the given letter as one of root's children.
-	if (key.length() == 1) {
+	if (key.size() == 1) {
 		TrieNode* newNode = new TrieNode();
-		newNode->letter = key.at(0);
+		newNode->letter = key.front();
 		newNode->data = data;
 		newNode->isLeaf = true;
-		this->children.emplace(key.at(0), newNode);
+		this->children.emplace(key.front(), newNode);
 	}
 	//If the key length is not 1, insert the new node as an intermediate node.
 	else {
-		char theLetter = key.at(0);
+		char theLetter = key.front();
 		TrieNode* nextNode = nullptr; //nextNode will be the node used in the next recursive call.
 
 		//Case 1: The root node already has a child corresponding to the given letter.
@@ -57,16 +67,16 @@ void TrieNode<T>::insert(string key, T data) {
 			this->children.emplace(theLetter, nextNode);
 		}
 
-		string nextKey = key.substr(1, key.size()); //remove theLetter from the front of the string
-		nextNode->insert(nextKey, data);
+		key.pop(); //remove the first letter
+		nextNode->insert(key, data);
 
 	}
 }
 
 template<typename T>
-TrieNode<T>* TrieNode<T>::search(string key) {
+TrieNode<T>* TrieNode<T>::search(queue<char>& key) {
 	
-	char theLetter = key.at(0);
+	char theLetter = key.front();
 
 	//Base case: The key length is 1, in which case the value is in one of the root's children if it exists in the tree at all.
 	if (key.size() == 1) {
@@ -82,8 +92,18 @@ TrieNode<T>* TrieNode<T>::search(string key) {
 		if (iter == children.end()) return nullptr; //If the first letter is not one of root's children, we know the value is not in the tree.
 		else {
 			TrieNode* nextNode = iter->second;
-			string nextKey = key.substr(1, key.size()); //Similar to the insert function, remove the first letter and recursively search.
-			return nextNode->search(nextKey);
+			key.pop(); //Similar to the insert function, remove the first letter and recursively search.
+			return nextNode->search(key);
 		}
 	}
+}
+
+template<typename T>
+void TrieNode<T>::insert(string key, T data) {
+	this->insert(createStringQueue(key), data);
+}
+
+template<typename T>
+TrieNode<T>* TrieNode<T>::search(string key) {
+	return this->search(createStringQueue(key));
 }

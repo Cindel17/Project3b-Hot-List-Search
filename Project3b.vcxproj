@@ -104,6 +104,7 @@
   <ItemGroup>
     <ClInclude Include="HashMap.h" />
     <ClInclude Include="Playlist.h" />
+    <ClInclude Include="Trie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

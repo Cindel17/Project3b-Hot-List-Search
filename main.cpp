@@ -6,6 +6,7 @@
 #include<chrono>
 #include "HashMap.h"
 #include "Playlist.h"
+#include "Trie.h"
 using namespace std;
 using namespace std::chrono;
 
@@ -188,6 +189,105 @@ void printPlaylistMap(HashMap<Playlist*>& theMap, int numEntries) {
     }
 }
 
+//**************Functions to initialize a trie*********************//
+
+//createTrackTrie generates a trie of Track objects searchable by their name.
+TrieNode<Track*> createTrackTrie(string filename, int numEntries) {
+    fstream file;
+    TrieNode<Track*> root;
+    file.open(filename, ios::in);
+
+    string user_id;
+    string artistname;
+    string trackname;
+    string playlistname;
+
+    string line;
+    string word = "";
+
+    //customize read in starting row
+    for (int i = 0; i < 1; i++) {
+        getline(file, line);
+    }
+
+    //start reading each row in the for loop
+    for (int i = 0; i < numEntries; i++) {
+
+        getline(file, line);
+
+        vector<string> row = parseLine(line);
+
+        //here are the vector indexes of each data category 
+        user_id = row.at(0);
+        artistname = row.at(1);
+        trackname = row.at(2);
+        playlistname = row.at(3);
+
+        TrieNode<Track*>* currNode = root.search(trackname);
+        if (currNode != nullptr) {
+            Track* trackPtr = currNode->getData();
+            trackPtr->addPlaylist(playlistname);
+        }
+        else {
+            Track* newTrack = new Track(trackname, artistname);
+            newTrack->addPlaylist(playlistname);
+            root.insert(trackname, newTrack);
+        }
+
+    }
+
+    file.close();
+    return root;
+}
+
+//createPlaylistTrie creates a trie of Playlist objects searchable by their name.
+TrieNode<Playlist*> createPlaylistTrie(string filename, int numEntries) {
+    fstream file;
+    TrieNode<Playlist*> root;
+    file.open(filename, ios::in);
+
+    string user_id;
+    string artistname;
+    string trackname;
+    string playlistname;
+
+    string line;
+    string word = "";
+
+    //customize read in starting row
+    for (int i = 0; i < 1; i++) {
+        getline(file, line);
+    }
+
+    //start reading each row in the for loop
+    for (int i = 0; i < numEntries; i++) {
+
+        getline(file, line);
+
+        vector<string> row = parseLine(line);
+
+        //here are the vector indexes of each data category 
+        user_id = row.at(0);
+        artistname = row.at(1);
+        trackname = row.at(2);
+        playlistname = row.at(3);
+
+        TrieNode<Playlist*>* currNode = root.search(playlistname);
+        if (currNode != nullptr) {
+            Playlist* playlist = currNode->getData();
+            playlist->addTrack(trackname, artistname);
+        }
+        else {
+            Playlist* playlistPtr = new Playlist(playlistname);
+            playlistPtr->addTrack(trackname, artistname);
+            root.insert(playlistname, playlistPtr);
+        }
+
+    }
+
+    file.close();
+    return root;
+}
 
 int main() {
 
@@ -214,7 +314,7 @@ int main() {
     auto beforeMap2 = high_resolution_clock::now();
     HashMap<Playlist*> playlistMap = createPlaylistMap("spotify_dataset.csv", 100000);
     auto afterMap2 = high_resolution_clock::now();
-    printPlaylistMap(playlistMap, 10);
+    printPlaylistMap(playlistMap, 1);
     cout << "Bucket count: " << playlistMap.bucketCount() << endl;
     cout << "Number of entries: " << playlistMap.getAllKeys().size() << endl;
     cout << "Load factor: " << (float)playlistMap.getAllKeys().size() / (float)playlistMap.bucketCount() << endl;
@@ -232,6 +332,19 @@ int main() {
     catch (out_of_range e) {
         cout << "Key not found" << endl;
     }
+
+    //Trie test code
+    
+    cout << "Beginning Trie test..." << endl;
+    TrieNode<Playlist*> playlistTrie = createPlaylistTrie("spotify_dataset.csv", 100000);
+    Playlist* testPlaylist = playlistTrie.search("Chill out")->getData();
+    cout << "Printing test playlist data: " << endl;
+    testPlaylist->printInfo();
+
+    TrieNode<Track*> trackTrie = createTrackTrie("spotify_dataset.csv", 100000);
+    Track* testTrack = trackTrie.search("(What's So Funny 'Bout) Peace, Love And Understanding")->getData();
+    testTrack->printInfo();
+
 
     return 0;
 }
