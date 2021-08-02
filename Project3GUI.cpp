@@ -369,7 +369,7 @@ int main()
         ttrieTime.setPosition(1, 560);
         ptrieTime.setPosition(1, 575);
         sTime.setPosition(250, 45);
-        sResults.setPosition(250, 90);
+        sResults.setPosition(250, 75);
 
         while (window.isOpen()) {
             while (window.pollEvent(event)) {
@@ -439,12 +439,12 @@ int main()
                                         vector<Track> tracks = playlistNode->getData()->getTracks();
                                         if (tracks.size() > 25) {
                                             for (int i = 0; i < 25; i++) {
-                                                result += tracks[i].name + " by " + tracks[i].artist + "\n";
+                                                result += tracks[i].name + " by " + tracks[i].artist + "\n   ";
                                             }
                                         }
                                         else {
                                             for (int i = 0; i < tracks.size(); i++) {
-                                                result += tracks[i].name + " by " + tracks[i].artist + "\n";
+                                                result += tracks[i].name + " by " + tracks[i].artist + "\n   ";
                                             }
                                         }
 
@@ -474,12 +474,12 @@ int main()
 
                                         if (tracks.size() > 25) {
                                             for (int i = 0; i < 25; i++) {
-                                                result += tracks[i].name + " by " + tracks[i].artist + "\n";
+                                                result += tracks[i].name + " by " + tracks[i].artist + "\n   ";
                                             }
                                         }
                                         else {
                                             for (int i = 0; i < tracks.size(); i++) {
-                                                result += tracks[i].name + " by " + tracks[i].artist + "\n";
+                                                result += tracks[i].name + " by " + tracks[i].artist + "\n   ";
                                             }
                                         }
 
