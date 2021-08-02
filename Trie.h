@@ -102,10 +102,12 @@ TrieNode<T>* TrieNode<T>::searchQueue(queue<char>& key) {
 
 template<typename T>
 void TrieNode<T>::insert(string key, T data) {
-	this->insertQueue(createStringQueue(key), data);
+	queue<char>& qRef = createStringQueue(key);
+	this->insertQueue(qRef, data);
 }
 
 template<typename T>
 TrieNode<T>* TrieNode<T>::search(string key) {
-	return this->searchQueue(createStringQueue(key));
+	queue<char>& qRef = createStringQueue(key);
+	return this->searchQueue(qRef);
 }
