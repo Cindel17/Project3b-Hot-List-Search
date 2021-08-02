@@ -68,8 +68,7 @@ void TrieNode<T>::insertQueue(queue<char>& key, T data) {
 		}
 
 		key.pop(); //remove the first letter
-		queue<char>& keyRef = key;
-		nextNode->insertQueue(keyRef, data);
+		nextNode->insertQueue(key, data);
 
 	}
 }
@@ -94,20 +93,21 @@ TrieNode<T>* TrieNode<T>::searchQueue(queue<char>& key) {
 		else {
 			TrieNode* nextNode = iter->second;
 			key.pop(); //Similar to the insert function, remove the first letter and recursively search.
-			queue<char>& keyRef = key;
-			return nextNode->searchQueue(keyRef);
+			return nextNode->searchQueue(key);
 		}
 	}
 }
 
 template<typename T>
 void TrieNode<T>::insert(string key, T data) {
-	queue<char>& qRef = createStringQueue(key);
+	queue<char> theQueue = createStringQueue(key);
+	queue<char>& qRef = theQueue;
 	this->insertQueue(qRef, data);
 }
 
 template<typename T>
 TrieNode<T>* TrieNode<T>::search(string key) {
-	queue<char>& qRef = createStringQueue(key);
+	queue<char> theQueue = createStringQueue(key);
+	queue<char>& qRef = theQueue;
 	return this->searchQueue(qRef);
 }
