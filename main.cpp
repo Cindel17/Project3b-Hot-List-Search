@@ -303,6 +303,9 @@ int main() {
         cout << "How many entries of the database would you like to load?" << endl;
         cin >> numEntries;
 
+        cout << "Loading database. This may take a few minutes." << endl;
+        cout << endl;
+
         cout << "Creating track map..." << endl;
 
         auto beforeMap = high_resolution_clock::now();
@@ -313,8 +316,8 @@ int main() {
         cout << "Number of entries: " << trackMap.getAllKeys().size() << endl;
         cout << "Load factor: " << (float)trackMap.getAllKeys().size() / (float)trackMap.bucketCount() << endl;
 
-        auto timeTaken = duration_cast<milliseconds>(afterMap - beforeMap);
-        cout << "Time taken to create track map: " << timeTaken.count() << " milliseconds " << endl;
+        auto timeTaken = duration_cast<seconds>(afterMap - beforeMap);
+        cout << "Time taken to create track map: " << timeTaken.count() << " seconds" << endl;
 
         cout << endl;
 
@@ -327,8 +330,8 @@ int main() {
         cout << "Number of entries: " << playlistMap.getAllKeys().size() << endl;
         cout << "Load factor: " << (float)playlistMap.getAllKeys().size() / (float)playlistMap.bucketCount() << endl;
 
-        auto timeTaken2 = duration_cast<milliseconds>(afterMap2 - beforeMap2);
-        cout << "Time taken to create playlist map: " << timeTaken2.count() << " milliseconds" << endl;
+        auto timeTaken2 = duration_cast<seconds>(afterMap2 - beforeMap2);
+        cout << "Time taken to create playlist map: " << timeTaken2.count() << " seconds" << endl;
 
         cout << endl;
 
@@ -339,15 +342,17 @@ int main() {
         auto beforeTrackTrie = high_resolution_clock::now();
         trackTrie = createTrackTrie("spotify_dataset.csv", numEntries);
         auto afterTrackTrie = high_resolution_clock::now();
-        auto timeTakenTrackTrie = duration_cast<milliseconds>(afterTrackTrie - beforeTrackTrie);
-        cout << "Time taken to create track trie: " << timeTakenTrackTrie.count() << " milliseconds" << endl;
+        auto timeTakenTrackTrie = duration_cast<seconds>(afterTrackTrie - beforeTrackTrie);
+        cout << "Time taken to create track trie: " << timeTakenTrackTrie.count() << " seconds" << endl;
+
+        cout << endl;
 
         cout << "Creating playlist trie..." << endl;
         auto beforePlaylistTrie = high_resolution_clock::now();
         playlistTrie = createPlaylistTrie("spotify_dataset.csv", numEntries);
         auto afterPlaylistTrie = high_resolution_clock::now();
-        auto timeTakenPlaylistTrie = duration_cast<milliseconds>(afterPlaylistTrie - beforePlaylistTrie);
-        cout << "Time taken to create playlist trie: " << timeTakenPlaylistTrie.count() << " milliseconds" << endl;
+        auto timeTakenPlaylistTrie = duration_cast<seconds>(afterPlaylistTrie - beforePlaylistTrie);
+        cout << "Time taken to create playlist trie: " << timeTakenPlaylistTrie.count() << " seconds" << endl;
 
         cout << endl;
     }
@@ -399,6 +404,7 @@ int main() {
                     cout << "We found the following track: " << endl;
                     Track* theTrack = trackTrie.search(searchTerm)->getData();
                     theTrack->printInfo();
+                    cout << endl;
                 }
             }
             else if (choice == 2) {
@@ -411,6 +417,7 @@ int main() {
                     Playlist* thePlaylist = playlistTrie.search(searchTerm)->getData();
                     cout << "We found the following playlist: " << endl;
                     thePlaylist->printInfo();
+                    cout << endl;
                 }
                 else {
                     cout << "Your search did not return any results." << endl;
@@ -426,7 +433,9 @@ int main() {
                     auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
                     cout << "Your search took " << searchTime.count() << " microseconds." << endl;
                     cout << "We found the following playlist: " << endl;
+                    cout << endl;
                     for (Playlist* p : playlists) p->printInfo();
+                    cout << endl;
                 }
                 catch (out_of_range e) {
                     cout << "Your search did not return any results." << endl;
@@ -440,7 +449,9 @@ int main() {
                     auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
                     cout << "Your search took " << searchTime.count() << " microseconds." << endl;
                     cout << "We found the following track: " << endl;
+                    cout << endl;
                     for (Track* t: tracks) t->printInfo();
+                    cout << endl;
                 }
                 catch (out_of_range e) {
                     cout << "Your search did not return any results." << endl;
