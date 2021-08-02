@@ -22,8 +22,8 @@ public:
 	T getData();
 	TrieNode* search(string key); //search for the given string, treating the current node as the root. Returns a pointer to the required node if found, returns nullptr if not found.
 	void insert(string key, T data);
-	TrieNode* search(queue<char>& key);
-	void insert(queue<char>& key, T data);
+	TrieNode* searchQueue(queue<char>& key);
+	void insertQueue(queue<char>& key, T data);
 };
 
 template<typename T>
@@ -39,7 +39,7 @@ T TrieNode<T>::getData() {
 }
 
 template<typename T>
-void TrieNode<T>::insert(queue<char>& key, T data) {
+void TrieNode<T>::insertQueue(queue<char>& key, T data) {
 
 	//Base case: The key length is 1. Insert a new leaf node with the given letter as one of root's children.
 	if (key.size() == 1) {
@@ -68,13 +68,13 @@ void TrieNode<T>::insert(queue<char>& key, T data) {
 		}
 
 		key.pop(); //remove the first letter
-		nextNode->insert(key, data);
+		nextNode->insertQueue(key, data);
 
 	}
 }
 
 template<typename T>
-TrieNode<T>* TrieNode<T>::search(queue<char>& key) {
+TrieNode<T>* TrieNode<T>::searchQueue(queue<char>& key) {
 	
 	char theLetter = key.front();
 
@@ -93,17 +93,17 @@ TrieNode<T>* TrieNode<T>::search(queue<char>& key) {
 		else {
 			TrieNode* nextNode = iter->second;
 			key.pop(); //Similar to the insert function, remove the first letter and recursively search.
-			return nextNode->search(key);
+			return nextNode->searchQueue(key);
 		}
 	}
 }
 
 template<typename T>
 void TrieNode<T>::insert(string key, T data) {
-	this->insert(createStringQueue(key), data);
+	this->insertQueue(createStringQueue(key), data);
 }
 
 template<typename T>
 TrieNode<T>* TrieNode<T>::search(string key) {
-	return this->search(createStringQueue(key));
+	return this->searchQueue(createStringQueue(key));
 }
