@@ -90,7 +90,7 @@ int main()
                         else if (playlistWordInput.compare("") == 0 && songInput.compare("") != 0) {//only song field has input
                             //search for song
                         }
-                        else if () {//both are filled out
+                        else if (playlistWordInput.compare("") != 0 && songInput.compare("") != 0) {//both are filled out
                             //search for song
                             //search for playlist in retrieved ones
                         }
