@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <fstream>
-#include<string>
-#include<iostream>
+#include <string>
+#include <iostream>
 #include <sstream>
-#include<math.h>
-#include<chrono>
+#include <math.h>
+#include <chrono>
 #include <vector>
 #include "HashMap.h"
 #include "Playlist.h"
@@ -418,6 +418,7 @@ int main()
                         if (structureInput.compare("Trie") != 0 && structureInput.compare("trie") != 0 &&
                             structureInput.compare("Map") != 0 && structureInput.compare("map") != 0) {//no valid structure
                             string timeOfSearch = "You didn't make a search!";
+                            sTime.setString(timeOfSearch);
                             string result = "Invalid data structure!";
                             sResults.setString(result);
                         }
@@ -498,6 +499,7 @@ int main()
                                     auto afterSearch = high_resolution_clock::now();
                                     auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
                                     string timeOfSearch = "Your search took " + to_string(searchTime.count()) + " microseconds!";
+                                    sTime.setString(timeOfSearch);
 
                                     if (trackNode != nullptr) {
                                         vector<string> playlists = trackNode->getData()->playlistNames;
@@ -520,6 +522,7 @@ int main()
                                         auto afterSearch = high_resolution_clock::now();
                                         auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
                                         string timeOfSearch = "Your search took " + to_string(searchTime.count()) + " microseconds!";
+                                        sTime.setString(timeOfSearch);
 
                                         vector<string> playlists;
                                         for (Track* t : tracks) playlists.insert(playlists.end(), t->playlistNames.begin(), t->playlistNames.end());                                     
