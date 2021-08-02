@@ -291,60 +291,167 @@ TrieNode<Playlist*> createPlaylistTrie(string filename, int numEntries) {
 
 int main() {
 
-    //Code to test creation of a map organized by track and a map organized by playlist.
-    //Each test case constructs a map with the full 100,000 entries, but only prints the first 10.
+    HashMap<Track*> trackMap;
+    HashMap<Playlist*> playlistMap;
+    TrieNode<Track*> trackTrie;
+    TrieNode<Playlist*> playlistTrie;
 
-    cout << "Creating track map..." << endl;
-
-    auto beforeMap = high_resolution_clock::now();
-    HashMap<Track*> trackMap = createTrackMap("spotify_dataset.csv", 100000);
-    auto afterMap = high_resolution_clock::now();
-    printTrackMap(trackMap, 10);
-    cout << "Bucket count: " << trackMap.bucketCount() << endl;
-    cout << "Number of entries: " << trackMap.getAllKeys().size() << endl;
-    cout << "Load factor: " << (float)trackMap.getAllKeys().size() / (float)trackMap.bucketCount() << endl;
-
-    auto timeTaken = duration_cast<milliseconds>(afterMap - beforeMap);
-    cout << "Time taken to create track map: " << timeTaken.count() << " milliseconds " << endl;
-
-    cout << endl;
-
-    cout << "Creating playlist map..." << endl;
-
-    auto beforeMap2 = high_resolution_clock::now();
-    HashMap<Playlist*> playlistMap = createPlaylistMap("spotify_dataset.csv", 100000);
-    auto afterMap2 = high_resolution_clock::now();
-    printPlaylistMap(playlistMap, 1);
-    cout << "Bucket count: " << playlistMap.bucketCount() << endl;
-    cout << "Number of entries: " << playlistMap.getAllKeys().size() << endl;
-    cout << "Load factor: " << (float)playlistMap.getAllKeys().size() / (float)playlistMap.bucketCount() << endl;
-
-    auto timeTaken2 = duration_cast<milliseconds>(afterMap2 - beforeMap2);
-    cout << "Time taken to create playlist map: " << timeTaken2.count() << " milliseconds" << endl;
-
-
-    //Example of how you would retrieve a particular value from the map.
-    //The map throws an out_of_range exception if a key is not valid.
     try {
-        list<Playlist*> testList = playlistMap.retrieve("Chill out");
-        for (Playlist* p : testList) p->printInfo();
+
+        int numEntries = 0;
+        cout << "Welcome to Hot List Search!" << endl;
+        cout << "How many entries of the database would you like to load?" << endl;
+        cin >> numEntries;
+
+        cout << "Creating track map..." << endl;
+
+        auto beforeMap = high_resolution_clock::now();
+        trackMap = createTrackMap("spotify_dataset.csv", numEntries);
+        auto afterMap = high_resolution_clock::now();
+        cout << "Track map information: " << endl;
+        cout << "Bucket count: " << trackMap.bucketCount() << endl;
+        cout << "Number of entries: " << trackMap.getAllKeys().size() << endl;
+        cout << "Load factor: " << (float)trackMap.getAllKeys().size() / (float)trackMap.bucketCount() << endl;
+
+        auto timeTaken = duration_cast<milliseconds>(afterMap - beforeMap);
+        cout << "Time taken to create track map: " << timeTaken.count() << " milliseconds " << endl;
+
+        cout << endl;
+
+        cout << "Creating playlist map..." << endl;
+        cout << "Playlist map information:" << endl;
+        auto beforeMap2 = high_resolution_clock::now();
+        playlistMap = createPlaylistMap("spotify_dataset.csv", numEntries);
+        auto afterMap2 = high_resolution_clock::now();
+        cout << "Bucket count: " << playlistMap.bucketCount() << endl;
+        cout << "Number of entries: " << playlistMap.getAllKeys().size() << endl;
+        cout << "Load factor: " << (float)playlistMap.getAllKeys().size() / (float)playlistMap.bucketCount() << endl;
+
+        auto timeTaken2 = duration_cast<milliseconds>(afterMap2 - beforeMap2);
+        cout << "Time taken to create playlist map: " << timeTaken2.count() << " milliseconds" << endl;
+
+        cout << endl;
+
+
+        //Trie test code
+
+        cout << "Creating track trie..." << endl;
+        auto beforeTrackTrie = high_resolution_clock::now();
+        trackTrie = createTrackTrie("spotify_dataset.csv", numEntries);
+        auto afterTrackTrie = high_resolution_clock::now();
+        auto timeTakenTrackTrie = duration_cast<milliseconds>(afterTrackTrie - beforeTrackTrie);
+        cout << "Time taken to create track trie: " << timeTakenTrackTrie.count() << " milliseconds" << endl;
+
+        cout << "Creating playlist trie..." << endl;
+        auto beforePlaylistTrie = high_resolution_clock::now();
+        playlistTrie = createPlaylistTrie("spotify_dataset.csv", numEntries);
+        auto afterPlaylistTrie = high_resolution_clock::now();
+        auto timeTakenPlaylistTrie = duration_cast<milliseconds>(afterPlaylistTrie - beforePlaylistTrie);
+        cout << "Time taken to create playlist trie: " << timeTakenPlaylistTrie.count() << " milliseconds" << endl;
+
+        cout << endl;
     }
     catch (out_of_range e) {
-        cout << "Key not found" << endl;
+        cout << "The program failed to read the data file. Check that the file is configured correctly." << endl;
+        cout << "The file should be called spotify_dataset.csv and stored in the same directory as main." << endl;
+    }
+    
+
+    int choice = 0;
+
+    while (choice != 3) {
+        cout << "What would you like to do? Enter a number:" << endl;
+        cout << "1. Search for a track in the database" << endl;
+        cout << "2. Search for a playlist in the database" << endl;
+        cout << "3. Exit" << endl;
+
+        cin >> choice;
+
+        int whichStructure = 0;
+        string searchTerm;
+
+        if (choice != 3) {
+
+            cout << "Would you like to search the map or the trie? Enter a number:" << endl;
+            cout << "1. Trie" << endl;
+            cout << "2. Map" << endl;
+            cin >> whichStructure;
+
+            string newline;
+            getline(cin, newline);
+
+            cout << "Enter a search term: " << endl;
+            getline(cin, searchTerm);
+
+        }
+
+        if (whichStructure == 1) {
+            if (choice == 1) {
+                auto beforeSearch = high_resolution_clock::now();
+                TrieNode<Track*>* trackNode = trackTrie.search(searchTerm);
+                auto afterSearch = high_resolution_clock::now();
+                auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
+                cout << "Your search took " << searchTime.count() << " microseconds." << endl;
+                if(trackNode == nullptr) {
+                    cout << "Your search did not return any results." << endl;
+                }
+                else {
+                    cout << "We found the following track: " << endl;
+                    Track* theTrack = trackTrie.search(searchTerm)->getData();
+                    theTrack->printInfo();
+                }
+            }
+            else if (choice == 2) {
+                auto beforeSearch = high_resolution_clock::now();
+                TrieNode<Playlist*>* playlistNode = playlistTrie.search(searchTerm);
+                auto afterSearch = high_resolution_clock::now();
+                auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
+                cout << "Your search took " << searchTime.count() << " microseconds." << endl;
+                if(playlistNode != nullptr) {
+                    Playlist* thePlaylist = playlistTrie.search(searchTerm)->getData();
+                    cout << "We found the following playlist: " << endl;
+                    thePlaylist->printInfo();
+                }
+                else {
+                    cout << "Your search did not return any results." << endl;
+                }
+            }
+        }
+        else if (whichStructure == 2) {
+            if (choice == 2) {
+                try {
+                    auto beforeSearch = high_resolution_clock::now();
+                    list<Playlist*> playlists = playlistMap.retrieve(searchTerm);
+                    auto afterSearch = high_resolution_clock::now();
+                    auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
+                    cout << "Your search took " << searchTime.count() << " microseconds." << endl;
+                    cout << "We found the following playlist: " << endl;
+                    for (Playlist* p : playlists) p->printInfo();
+                }
+                catch (out_of_range e) {
+                    cout << "Your search did not return any results." << endl;
+                }
+            }
+            else if (choice == 1) {
+                try {
+                    auto beforeSearch = high_resolution_clock::now();
+                    list<Track*> tracks = trackMap.retrieve(searchTerm);
+                    auto afterSearch = high_resolution_clock::now();
+                    auto searchTime = duration_cast<microseconds>(afterSearch - beforeSearch);
+                    cout << "Your search took " << searchTime.count() << " microseconds." << endl;
+                    cout << "We found the following track: " << endl;
+                    for (Track* t: tracks) t->printInfo();
+                }
+                catch (out_of_range e) {
+                    cout << "Your search did not return any results." << endl;
+                }
+
+            }
+
+        }
+
     }
 
-    //Trie test code
     
-    cout << "Beginning Trie test..." << endl;
-    TrieNode<Playlist*> playlistTrie = createPlaylistTrie("spotify_dataset.csv", 100000);
-    Playlist* testPlaylist = playlistTrie.search("Chill out")->getData();
-    cout << "Printing test playlist data: " << endl;
-    testPlaylist->printInfo();
-
-    TrieNode<Track*> trackTrie = createTrackTrie("spotify_dataset.csv", 100000);
-    Track* testTrack = trackTrie.search("(What's So Funny 'Bout) Peace, Love And Understanding")->getData();
-    testTrack->printInfo();
-
-
     return 0;
 }
